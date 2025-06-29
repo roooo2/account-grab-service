@@ -1,12 +1,101 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from "react";
+import { Header } from "@/components/Header";
+import { ServiceSelector } from "@/components/ServiceSelector";
+import { AccountDisplay } from "@/components/AccountDisplay";
+import { AccountHistory } from "@/components/AccountHistory";
+import { FeatureCards } from "@/components/FeatureCards";
+import { generateAccount } from "@/utils/accountGenerator";
+
+export interface GeneratedAccount {
+  id: string;
+  service: string;
+  email: string;
+  password: string;
+  timestamp: Date;
+}
 
 const Index = () => {
+  const [selectedService, setSelectedService] = useState<string>("");
+  const [generatedAccount, setGeneratedAccount] = useState<GeneratedAccount | null>(null);
+  const [accountHistory, setAccountHistory] = useState<GeneratedAccount[]>([]);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  const handleGenerate = async () => {
+    if (!selectedService) return;
+    
+    setIsGenerating(true);
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      const account = generateAccount(selectedService);
+      setGeneratedAccount(account);
+      setAccountHistory(prev => [account, ...prev]);
+      setIsGenerating(false);
+    }, 1500);
+  };
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
+    <div className="min-h-screen bg-gray-900 text-white">
+      <Header />
+      
+      <main className="container mx-auto px-4 py-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Main Generator Section */}
+          <div className="lg:col-span-2">
+            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold mb-2">PatchEngine Gen</h1>
+                <p className="text-gray-400">
+                  Get accounts for your favorite services for free by just seeing an ad
+                </p>
+              </div>
+
+              <div className="space-y-6">
+                <ServiceSelector 
+                  selectedService={selectedService}
+                  onServiceChange={setSelectedService}
+                />
+
+                <button
+                  onClick={handleGenerate}
+                  disabled={!selectedService || isGenerating}
+                  className="w-full bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
+                >
+                  {isGenerating ? (
+                    <>
+                      <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                      Generating...
+                    </>
+                  ) : (
+                    <>
+                      <span>🎯</span>
+                      Generate
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {generatedAccount && (
+                <AccountDisplay account={generatedAccount} />
+              )}
+            </div>
+          </div>
+
+          {/* Account History Sidebar */}
+          <div className="lg:col-span-1">
+            <AccountHistory accounts={accountHistory} />
+          </div>
+        </div>
+
+        {/* Feature Cards */}
+        <FeatureCards />
+
+        {/* Footer */}
+        <footer className="text-center py-8 text-gray-500">
+          <p>Made by elmejor and patchengine</p>
+        </footer>
+      </main>
     </div>
   );
 };
