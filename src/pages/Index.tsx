@@ -36,16 +36,18 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-white">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white">
       <Header />
       
       <main className="container mx-auto px-4 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main Generator Section */}
           <div className="lg:col-span-2">
-            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700">
+            <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 shadow-2xl shadow-green-500/10">
               <div className="text-center mb-8">
-                <h1 className="text-3xl font-bold mb-2">PatchEngine Gen</h1>
+                <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
+                  PatchEngine Gen
+                </h1>
                 <p className="text-gray-400">
                   Get accounts for your favorite services for free by just seeing an ad
                 </p>
@@ -60,7 +62,7 @@ const Index = () => {
                 <button
                   onClick={handleGenerate}
                   disabled={!selectedService || isGenerating}
-                  className="w-full bg-gray-600 hover:bg-gray-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg font-medium transition-colors duration-200 flex items-center justify-center gap-2"
+                  className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed text-white py-3 px-6 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2 hover:scale-105 shadow-lg shadow-green-500/25"
                 >
                   {isGenerating ? (
                     <>

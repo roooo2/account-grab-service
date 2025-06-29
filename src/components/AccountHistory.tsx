@@ -7,7 +7,7 @@ interface AccountHistoryProps {
 
 export const AccountHistory = ({ accounts }: AccountHistoryProps) => {
   return (
-    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700">
+    <div className="bg-gray-800 rounded-xl p-6 border border-gray-700 shadow-2xl shadow-blue-500/10">
       <div className="flex items-center gap-2 mb-4">
         <span className="text-xl">🕐</span>
         <h2 className="text-lg font-semibold">Your Account History</h2>
@@ -20,7 +20,7 @@ export const AccountHistory = ({ accounts }: AccountHistoryProps) => {
           {accounts.map((account) => (
             <div
               key={account.id}
-              className="bg-gray-700 rounded-lg p-3 border border-gray-600 animate-fade-in"
+              className="bg-gray-900 rounded-lg p-3 border border-gray-600 animate-fade-in hover:border-green-500/50 transition-all duration-200"
             >
               <div className="flex items-center justify-between mb-2">
                 <span className="text-sm font-medium text-green-400">
