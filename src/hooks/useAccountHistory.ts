@@ -61,8 +61,8 @@ export const useAccountHistory = () => {
   };
 
   // Save account to Supabase
-  const saveAccount = async (account: GeneratedAccount) => {
-    if (!userId) return;
+  const saveAccount = async (account: GeneratedAccount): Promise<boolean> => {
+    if (!userId) return false;
 
     try {
       // Try to set the user context using the edge function
@@ -88,13 +88,16 @@ export const useAccountHistory = () => {
 
       if (error) {
         console.error('Error saving account:', error);
-        return;
+        return false;
       }
 
-      // Add to local state
+      // Add to local state immediately
       setAccountHistory(prev => [account, ...prev]);
+      console.log('Account saved successfully:', account.email);
+      return true;
     } catch (error) {
       console.error('Error saving account:', error);
+      return false;
     }
   };
 

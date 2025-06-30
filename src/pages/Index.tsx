@@ -7,6 +7,7 @@ import { AccountHistory } from "@/components/AccountHistory";
 import { FeatureCards } from "@/components/FeatureCards";
 import { generateAccount } from "@/utils/accountGenerator";
 import { useAccountHistory } from "@/hooks/useAccountHistory";
+import { toast } from "sonner";
 
 export interface GeneratedAccount {
   id: string;
@@ -48,16 +49,27 @@ const Index = () => {
     
     // Simulate API call delay
     setTimeout(async () => {
-      const account = generateAccount(selectedService);
-      setGeneratedAccount(account);
-      
-      // Save to Supabase
-      await saveAccount(account);
-      
-      setIsGenerating(false);
-      
-      // Send Discord webhook
-      await sendDiscordWebhook(selectedService);
+      try {
+        const account = generateAccount(selectedService);
+        setGeneratedAccount(account);
+        
+        // Save to Supabase - this will also add to local state
+        const success = await saveAccount(account);
+        
+        if (success) {
+          toast.success(`${selectedService.charAt(0).toUpperCase() + selectedService.slice(1)} account generated and saved!`);
+        } else {
+          toast.error("Account generated but failed to save to history");
+        }
+        
+        // Send Discord webhook
+        await sendDiscordWebhook(selectedService);
+      } catch (error) {
+        console.error('Error generating account:', error);
+        toast.error("Failed to generate account");
+      } finally {
+        setIsGenerating(false);
+      }
     }, 1500);
   };
 
