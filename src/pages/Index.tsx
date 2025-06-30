@@ -15,6 +15,25 @@ export interface GeneratedAccount {
   timestamp: Date;
 }
 
+const sendDiscordWebhook = async (service: string) => {
+  const webhookUrl = "https://discord.com/api/webhooks/1389330672103194645/VdNQSITvBEORsXtTtdL1eHprPuKcpGVG6U4VnPyMb8IAmYmF8XAbF0CWCs2tXM3VHMHk";
+  
+  try {
+    await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        content: `Someone has just generated a **${service.charAt(0).toUpperCase() + service.slice(1)}** account from our website! \n\nWant to gen too? Join our website gen ⬇️\nhttps://test22.com`
+      }),
+    });
+    console.log("Discord webhook sent successfully");
+  } catch (error) {
+    console.error("Error sending Discord webhook:", error);
+  }
+};
+
 const Index = () => {
   const [selectedService, setSelectedService] = useState<string>("");
   const [generatedAccount, setGeneratedAccount] = useState<GeneratedAccount | null>(null);
@@ -27,11 +46,14 @@ const Index = () => {
     setIsGenerating(true);
     
     // Simulate API call delay
-    setTimeout(() => {
+    setTimeout(async () => {
       const account = generateAccount(selectedService);
       setGeneratedAccount(account);
       setAccountHistory(prev => [account, ...prev]);
       setIsGenerating(false);
+      
+      // Send Discord webhook
+      await sendDiscordWebhook(selectedService);
     }, 1500);
   };
 
@@ -46,7 +68,7 @@ const Index = () => {
             <div className="bg-gray-800 rounded-xl p-8 border border-gray-700 shadow-2xl shadow-green-500/10">
               <div className="text-center mb-8">
                 <h1 className="text-3xl font-bold mb-2 bg-gradient-to-r from-green-400 to-blue-500 bg-clip-text text-transparent">
-                  PatchEngine Gen
+                  EngineOS Gen
                 </h1>
                 <p className="text-gray-400">
                   Get accounts for your favorite services for free by just seeing an ad

@@ -8,10 +8,10 @@ export const Header = () => {
         <div className="flex items-center gap-3">
           <img 
             src="https://media.discordapp.net/attachments/1387115721502232789/1388950377205858397/EF955802-E1AC-42FA-822F-1DA90BD771E1.png?ex=6862d857&is=686186d7&hm=c9cc06dba66be7e59d864fcfde014a924662148b30959afc4e28a61d956da9c3&=&format=webp&quality=lossless&width=575&height=575" 
-            alt="PatchEngine Logo" 
+            alt="EngineOS Logo" 
             className="w-8 h-8 rounded shadow-lg shadow-green-500/25"
           />
-          <h1 className="text-xl font-bold text-white">PatchEngine Gen</h1>
+          <h1 className="text-xl font-bold text-white">EngineOS Gen</h1>
         </div>
 
         <Button 
