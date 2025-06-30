@@ -22,15 +22,22 @@ export const useAccountHistory = () => {
     if (!userId) return;
 
     try {
-      // Set the user context for RLS
-      await supabase.rpc('set_config', {
-        setting_name: 'app.current_user_id',
-        setting_value: userId
-      });
+      // Try to set the user context using the edge function
+      try {
+        await supabase.functions.invoke('set_config', {
+          body: {
+            setting_name: 'app.current_user_id',
+            setting_value: userId
+          }
+        });
+      } catch (error) {
+        console.log('Edge function not available, continuing without user context');
+      }
 
       const { data, error } = await supabase
         .from('accounts')
         .select('*')
+        .eq('user_id', userId)
         .order('created_at', { ascending: false })
         .limit(50);
 
@@ -58,11 +65,17 @@ export const useAccountHistory = () => {
     if (!userId) return;
 
     try {
-      // Set the user context for RLS
-      await supabase.rpc('set_config', {
-        setting_name: 'app.current_user_id',
-        setting_value: userId
-      });
+      // Try to set the user context using the edge function
+      try {
+        await supabase.functions.invoke('set_config', {
+          body: {
+            setting_name: 'app.current_user_id',
+            setting_value: userId
+          }
+        });
+      } catch (error) {
+        console.log('Edge function not available, continuing without user context');
+      }
 
       const { error } = await supabase
         .from('accounts')
