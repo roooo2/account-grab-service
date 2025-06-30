@@ -6,6 +6,7 @@ import { AccountDisplay } from "@/components/AccountDisplay";
 import { AccountHistory } from "@/components/AccountHistory";
 import { FeatureCards } from "@/components/FeatureCards";
 import { generateAccount } from "@/utils/accountGenerator";
+import { useAccountHistory } from "@/hooks/useAccountHistory";
 
 export interface GeneratedAccount {
   id: string;
@@ -37,8 +38,8 @@ const sendDiscordWebhook = async (service: string) => {
 const Index = () => {
   const [selectedService, setSelectedService] = useState<string>("");
   const [generatedAccount, setGeneratedAccount] = useState<GeneratedAccount | null>(null);
-  const [accountHistory, setAccountHistory] = useState<GeneratedAccount[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
+  const { accountHistory, saveAccount } = useAccountHistory();
 
   const handleGenerate = async () => {
     if (!selectedService) return;
@@ -49,7 +50,10 @@ const Index = () => {
     setTimeout(async () => {
       const account = generateAccount(selectedService);
       setGeneratedAccount(account);
-      setAccountHistory(prev => [account, ...prev]);
+      
+      // Save to Supabase
+      await saveAccount(account);
+      
       setIsGenerating(false);
       
       // Send Discord webhook
@@ -117,7 +121,7 @@ const Index = () => {
 
         {/* Footer */}
         <footer className="text-center py-8 text-gray-500">
-          <p>Made by elmejor and patchengine</p>
+          <p>Made by elmejor and EngineOS</p>
         </footer>
       </main>
     </div>
