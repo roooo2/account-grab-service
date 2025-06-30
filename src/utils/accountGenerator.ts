@@ -61,48 +61,37 @@ const mockAccounts = {
   ],
 };
 
-// Store used accounts to prevent duplicates - using localStorage for persistence
-const getUsedAccounts = (): Set<string> => {
+// Store globally used accounts to prevent duplicates across all users
+const getGloballyUsedAccounts = (): Set<string> => {
   try {
-    const stored = localStorage.getItem('used_accounts');
+    const stored = localStorage.getItem('globally_used_accounts');
     return stored ? new Set(JSON.parse(stored)) : new Set();
   } catch {
     return new Set();
   }
 };
 
-const saveUsedAccounts = (usedAccounts: Set<string>) => {
+const saveGloballyUsedAccounts = (usedAccounts: Set<string>) => {
   try {
-    localStorage.setItem('used_accounts', JSON.stringify(Array.from(usedAccounts)));
+    localStorage.setItem('globally_used_accounts', JSON.stringify(Array.from(usedAccounts)));
   } catch (error) {
-    console.error('Failed to save used accounts:', error);
+    console.error('Failed to save globally used accounts:', error);
   }
 };
 
-export const generateAccount = (service: string): GeneratedAccount => {
+export const generateAccount = (service: string): GeneratedAccount | null => {
   const serviceAccounts = mockAccounts[service as keyof typeof mockAccounts] || [];
-  const usedAccounts = getUsedAccounts();
+  const globallyUsedAccounts = getGloballyUsedAccounts();
   
-  // Filter out used accounts
-  const availableAccounts = serviceAccounts.filter(account => !usedAccounts.has(account));
+  // Filter out globally used accounts
+  const availableAccounts = serviceAccounts.filter(account => !globallyUsedAccounts.has(account));
   
   console.log(`Available ${service} accounts:`, availableAccounts.length);
-  console.log(`Used accounts total:`, usedAccounts.size);
+  console.log(`Globally used accounts total:`, globallyUsedAccounts.size);
   
   if (availableAccounts.length === 0) {
-    // If no accounts available, generate a random one as fallback
-    const randomEmail = `${service}${Math.floor(Math.random() * 10000)}@temp.com`;
-    const randomPassword = `${service}${Math.floor(Math.random() * 10000)}`;
-    
-    console.log(`No more ${service} accounts available, generating random account`);
-    
-    return {
-      id: Math.random().toString(36).substring(7),
-      service,
-      email: randomEmail,
-      password: randomPassword,
-      timestamp: new Date(),
-    };
+    console.log(`No more ${service} accounts available`);
+    return null; // Return null when no accounts available
   }
   
   // Select random account from available ones
@@ -110,9 +99,9 @@ export const generateAccount = (service: string): GeneratedAccount => {
   const selectedAccount = availableAccounts[randomIndex];
   const [email, password] = selectedAccount.split(':');
   
-  // Mark as used and save to localStorage
-  usedAccounts.add(selectedAccount);
-  saveUsedAccounts(usedAccounts);
+  // Mark as globally used and save to localStorage
+  globallyUsedAccounts.add(selectedAccount);
+  saveGloballyUsedAccounts(globallyUsedAccounts);
   
   console.log(`Generated ${service} account:`, email);
   console.log(`Remaining ${service} accounts:`, availableAccounts.length - 1);
@@ -126,23 +115,23 @@ export const generateAccount = (service: string): GeneratedAccount => {
   };
 };
 
-// Function to reset used accounts (for testing purposes)
-export const resetUsedAccounts = () => {
+// Function to reset globally used accounts (for testing purposes)
+export const resetGloballyUsedAccounts = () => {
   try {
-    localStorage.removeItem('used_accounts');
-    console.log('Reset all used accounts');
+    localStorage.removeItem('globally_used_accounts');
+    console.log('Reset all globally used accounts');
   } catch (error) {
-    console.error('Failed to reset used accounts:', error);
+    console.error('Failed to reset globally used accounts:', error);
   }
 };
 
 // Function to get account statistics
 export const getAccountStats = () => {
-  const usedAccounts = getUsedAccounts();
+  const globallyUsedAccounts = getGloballyUsedAccounts();
   const stats: Record<string, { total: number; used: number; available: number }> = {};
   
   Object.entries(mockAccounts).forEach(([service, accounts]) => {
-    const usedForService = accounts.filter(account => usedAccounts.has(account)).length;
+    const usedForService = accounts.filter(account => globallyUsedAccounts.has(account)).length;
     stats[service] = {
       total: accounts.length,
       used: usedForService,

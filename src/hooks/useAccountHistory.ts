@@ -22,18 +22,8 @@ export const useAccountHistory = () => {
     if (!userId) return;
 
     try {
-      // Try to set the user context using the edge function
-      try {
-        await supabase.functions.invoke('set_config', {
-          body: {
-            setting_name: 'app.current_user_id',
-            setting_value: userId
-          }
-        });
-      } catch (error) {
-        console.log('Edge function not available, continuing without user context');
-      }
-
+      console.log('Loading account history for user:', userId);
+      
       const { data, error } = await supabase
         .from('accounts')
         .select('*')
@@ -55,6 +45,7 @@ export const useAccountHistory = () => {
       }));
 
       setAccountHistory(formattedAccounts);
+      console.log('Loaded account history:', formattedAccounts.length, 'accounts');
     } catch (error) {
       console.error('Error loading account history:', error);
     }
@@ -62,21 +53,14 @@ export const useAccountHistory = () => {
 
   // Save account to Supabase
   const saveAccount = async (account: GeneratedAccount): Promise<boolean> => {
-    if (!userId) return false;
+    if (!userId) {
+      console.error('No user ID available for saving account');
+      return false;
+    }
 
     try {
-      // Try to set the user context using the edge function
-      try {
-        await supabase.functions.invoke('set_config', {
-          body: {
-            setting_name: 'app.current_user_id',
-            setting_value: userId
-          }
-        });
-      } catch (error) {
-        console.log('Edge function not available, continuing without user context');
-      }
-
+      console.log('Saving account for user:', userId, 'Account:', account.email);
+      
       const { error } = await supabase
         .from('accounts')
         .insert({

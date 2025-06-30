@@ -51,6 +51,15 @@ const Index = () => {
     setTimeout(async () => {
       try {
         const account = generateAccount(selectedService);
+        
+        if (!account) {
+          // No more accounts available
+          toast.error(`No more ${selectedService.charAt(0).toUpperCase() + selectedService.slice(1)} accounts available. Please wait for restock!`);
+          setGeneratedAccount(null);
+          setIsGenerating(false);
+          return;
+        }
+        
         setGeneratedAccount(account);
         
         // Save to Supabase - this will also add to local state
